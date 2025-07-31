@@ -24,6 +24,7 @@ from rest_framework_simplejwt.views import (
 
 from django.views.decorators.csrf import csrf_exempt
 from allauth.socialaccount.providers.google.views import oauth2_login
+from auth.views import login_logic
 
 # CSRF exemption for Google OAuth2 login
 @csrf_exempt
@@ -35,7 +36,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('auth/', include('auth.urls')),
     path('accounts/', include('allauth.urls')),
+    path('accounts/profile/', login_logic, name='login_logic'),
     path('login/', google_oauth2_login, name='google_login'), 
 ]

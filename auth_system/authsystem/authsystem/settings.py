@@ -24,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-fmym-307&6&22y67fbyb=4xuj&6+nvkcf^4w4=j5%2#i-d7$d6'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'localhost:3000']
+ALLOWED_HOSTS = ['localhost', 'localhost:3000', '127.0.0.1']
 
 CSRF_TRUSTED_ORIGINS =['http://localhost:3000', 'http://127.0.0.1:3000']
 CORS_ALLOWED_ORIGINS = [
@@ -82,7 +82,6 @@ REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'auth_token'
 JWT_AUTH_REFRESH_COOKIE = 'refresh_token'
 SOCIALACCOUNT_AUTO_SIGNUP = True
-SOCIALACCOUNT_ADAPTER = "authsystem.adapters.SkipAccountAdapter"
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
