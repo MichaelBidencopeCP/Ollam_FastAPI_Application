@@ -30,12 +30,12 @@ const toggleMobileMenu = () => {
 
         <!-- Login Button (Desktop) -->
         <div class="hidden md:block">
-          <a
-            href="http://localhost:8000/accounts/google/login"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition duration-200"
-          >
-            Login
-          </a>
+          <!-- Post to login so that user does not see django allauth page but instead redirected directly to google signin -->
+          <form action="http://localhost:8000/custom/google/login/" method="post" class="inline-block">
+            
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition duration-200">Login</button>
+          
+          </form>
         </div>
 
         <!-- Mobile Menu Button -->

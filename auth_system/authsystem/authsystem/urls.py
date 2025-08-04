@@ -37,6 +37,8 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('accounts/', include('allauth.urls')),
+    path('custom/google/login/', google_oauth2_login, name='google_login'),
     path('accounts/profile/', login_logic, name='login_logic'),
     path('login/', google_oauth2_login, name='google_login'), 
 ]
+

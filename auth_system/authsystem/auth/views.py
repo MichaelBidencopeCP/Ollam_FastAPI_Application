@@ -4,6 +4,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework.decorators import APIView
 from rest_framework.permissions import IsAuthenticated
+from allauth.socialaccount.models import SocialAccount, SocialToken
 
 import os
 
@@ -17,7 +18,21 @@ def login_redirect(request):
     """
     return redirect('socialaccount_login', provider='google')
 
+def login_logic(request):
+    """
+    Logic for handling user login after Google authentication.
+    This function can be customized to handle post-login actions.
+    """
+    if request.user.is_authenticated:
+        print("User is authenticated")
+        print(f"User: {request.user}")
+        print(f"request:" + str(request))
+        print("Social Account: " + str(SocialAccount.objects.filter(user=request.user).first()))
+        print("Social Token: " + str(SocialToken.objects.filter(account__user=request.user).first()))
+    return redirect('http://localhost:5173')
+    
 
+    
 #Chagne to a drf endpoint
 class TokenCreation(APIView):
     """
@@ -34,4 +49,3 @@ class TokenCreation(APIView):
             'access': str(refresh.access_token),
         })
 
-        

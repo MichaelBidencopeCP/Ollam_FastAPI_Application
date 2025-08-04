@@ -31,10 +31,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'localhost:3000', '127.0.0.1']
 
-CSRF_TRUSTED_ORIGINS =['http://localhost:3000', 'http://127.0.0.1:3000']
+CSRF_TRUSTED_ORIGINS =['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5173']
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127,0.0.1:3000",
+    'http://localhost:5173',
 ]
 
 # Application definition
@@ -82,7 +83,7 @@ REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'auth_token'
 JWT_AUTH_REFRESH_COOKIE = 'refresh_token'
 SOCIALACCOUNT_AUTO_SIGNUP = True
-
+SOCIALACCOUNT_STORE_TOKENS = True
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {

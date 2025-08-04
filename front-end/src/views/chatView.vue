@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { getAIResponse } from '@/api';
 
 // Sample chat messages for demonstration
 const messages = ref([
@@ -8,13 +9,10 @@ const messages = ref([
 const newMessage = ref('');
 const chatContainer = ref(null);
 
-// Websocket connection
-onMounted
 
 
 const sendMessage = () => {
   if (newMessage.value.trim() === '') return;
-  
   // Add user message
   messages.value.push({
     id: messages.value.length + 1,
@@ -25,7 +23,35 @@ const sendMessage = () => {
   // Clear input
   const userMessage = newMessage.value;
   newMessage.value = '';
-  
+
+  // API call to get AI response
+  //simple placeholder fetch call to localhost:4000/api/v1/ollama/ask
+  getAIResponse({ prompt: userMessage }).then(response => {
+    if (response && response.response) {
+      // Add AI response message
+      messages.value.push({
+        id: messages.value.length + 1,
+        sender: 'ai',
+        content: response.response
+      });
+      scrollToBottom();
+    } else {
+      console.error('No response from AI');
+    }
+  }).catch(error => {
+    console.error('Error fetching AI response:', error);
+    // Add error message
+    messages.value.push({
+      id: messages.value.length + 1,
+      sender: 'ai',
+      content: 'Error fetching response from AI.'
+    });
+  });
+  // Clear input
+  newMessage.value = '';
+
+   
+
 
     
   // Scroll to bottom after adding new messages
