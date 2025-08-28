@@ -8,6 +8,7 @@ const messages = ref([
 
 const newMessage = ref('');
 const chatContainer = ref(null);
+const messageLoading = ref(false);
 
 
 
@@ -26,6 +27,7 @@ const sendMessage = () => {
 
   // API call to get AI response
   //simple placeholder fetch call to localhost:4000/api/v1/ollama/ask
+  messageLoading.value = true;
   getAIResponse({ prompt: userMessage }).then(response => {
     if (response && response.response) {
       // Add AI response message
@@ -38,6 +40,7 @@ const sendMessage = () => {
     } else {
       console.error('No response from AI');
     }
+    messageLoading.value = false;
   }).catch(error => {
     console.error('Error fetching AI response:', error);
     // Add error message
@@ -46,6 +49,7 @@ const sendMessage = () => {
       sender: 'ai',
       content: 'Error fetching response from AI.'
     });
+    messageLoading.value = false;
   });
   // Clear input
   newMessage.value = '';
@@ -96,6 +100,10 @@ onMounted(() => {
               {{ message.content }}
             </div>
           </div>
+        </div>
+        <!-- dot dot dot animation -->
+        <div v-if="messageLoading" class="flex justify-start mt-4">
+          <span class="animate-pulse text-gray-400 text-7xl">...</span>
         </div>
       </div>
       

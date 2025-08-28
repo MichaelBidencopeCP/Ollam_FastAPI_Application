@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import APIView
 from rest_framework.permissions import IsAuthenticated
 from allauth.socialaccount.models import SocialAccount, SocialToken
+import requests
 
 import os
 
@@ -20,32 +21,42 @@ def login_redirect(request):
 
 def login_logic(request):
     """
-    Logic for handling user login after Google authentication.
-    This function can be customized to handle post-login actions.
+    Handles the login logic after Google OAuth2 authentication.
     """
     if request.user.is_authenticated:
-        print("User is authenticated")
-        print(f"User: {request.user}")
-        print(f"request:" + str(request))
-        print("Social Account: " + str(SocialAccount.objects.filter(user=request.user).first()))
-        print("Social Token: " + str(SocialToken.objects.filter(account__user=request.user).first()))
-    return redirect('http://localhost:5173')
-    
+        # If the user is already authenticated, redirect to the frontend
+        return redirect('http://localhost:5173')  # Change this to your frontend URL
 
-    
-#Chagne to a drf endpoint
-class TokenCreation(APIView):
+    # If not authenticated, redirect to the Google login page
+    return redirect('socialaccount_login', provider='google')
+
+class CalendarLogic(APIView):
     """
-    Logic for handling user login after Google authentication.
-    This function can be customized to handle post-login actions.
+    Get: Retrieves the user's Google Calendar events.
+    Patch: Updates the user's Google Calendar events.(not sure if I will implement this. AI creating events?)
     """
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        # Generate JWT tokens
-        refresh = RefreshToken.for_user(request.user)
-        # User is authenticated, redirect to a success page or dashboard
-        return Response({
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        })
-
+        try:
+            # Get the user's social account and token
+            social_account = SocialAccount.objects.get(user=request.user, provider='google')
+            social_token = SocialToken.objects.get(account=social_account)
+            
+            # Make a request to the Google Calendar API
+            headers = {
+                'Authorization': f'Bearer {social_token.token}',
+                'Accept': 'application/json',
+            }
+            response = requests.get('https://www.googleapis.com/calendar/v3/calendars/primary', headers=headers)
+            print(response.status_code)
+            print(response.json())
+            if response.status_code == 200:
+                return Response(response.json())
+            else:
+                return Response({'error': 'Failed to retrieve calendar events'}, status=response.status_code)
+        except SocialAccount.DoesNotExist:
+            return Response({'error': 'Social account not found'}, status=404)
+        except SocialToken.DoesNotExist:
+            return Response({'error': 'Social token not found'}, status=404)
+    
+    
